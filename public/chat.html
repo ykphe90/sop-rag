@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP 智能问答</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #C84B00, #E85D04);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-icon { font-size: 24px; }
+  .header-title { font-size: 16px; font-weight: 600; }
+  .header-sub { font-size: 12px; color: white; margin-top: 2px; opacity: 0.8; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+
+  /* Language toggle */
+  .lang-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lang-btn {
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn.active { background: white; color: #E85D04; }
+  .lang-btn:hover:not(.active) { color: white; }
+
+  /* New Chat button */
+  .new-chat-btn {
+    border: 1.5px solid rgba(255,255,255,0.6);
+    background: transparent;
+    color: white;
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .new-chat-btn:hover { background: rgba(255,255,255,0.15); }
+
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .welcome { text-align: center; color: #888; padding: 40px 20px; }
+  .welcome h2 { font-size: 18px; color: #444; margin-bottom: 8px; }
+  .welcome p { font-size: 14px; line-height: 1.6; }
+  .sample-questions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+  .sample-q {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.2s;
+  }
+  .sample-q:hover { background: #E85D04; color: white; border-color: #E85D04; }
+
+  .message { display: flex; flex-direction: column; max-width: 780px; width: 100%; margin: 0 auto; }
+  .user-message { align-items: flex-end; }
+  .user-bubble {
+    background: #E85D04;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    font-size: 14px;
+    max-width: 70%;
+    line-height: 1.5;
+  }
+  .ai-message { align-items: flex-start; }
+  .ai-label { font-size: 11px; color: #888; margin-bottom: 6px; padding-left: 4px; }
+  .ai-bubble {
+    background: white;
+    border: 1px solid #e8e8e8;
+    padding: 16px;
+    border-radius: 4px 18px 18px 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #333;
+    white-space: pre-wrap;
+    max-width: 100%;
+  }
+
+  /* Memory indicator */
+  .memory-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: #2e7d32;
+    margin-bottom: 6px;
+  }
+
+  .sources { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .source-chip {
+    background: #FFF3E0;
+    border: 1px solid #FFCC80;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: #BF360C;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .source-sim { background: #E85D04; color: white; border-radius: 3px; padding: 1px 5px; font-size: 10px; }
+  .source-rerank { background: #6c5ce7; color: white; border-radius: 3px; padding: 1px 5px; font-size: 10px; }
+
+  .token-info { font-size: 11px; color: #bbb; margin-top: 6px; padding-left: 4px; }
+
+  .loading-bubble {
+    background: white;
+    border: 1px solid #e8e8e8;
+    padding: 16px;
+    border-radius: 4px 18px 18px 18px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot { width: 8px; height: 8px; background: #aaa; border-radius: 50%; animation: bounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+  }
+
+  .input-area {
+    background: white;
+    border-top: 1px solid #e8e8e8;
+    padding: 16px 24px;
+    flex-shrink: 0;
+  }
+  .input-row { display: flex; gap: 10px; max-width: 780px; margin: 0 auto; }
+  input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 24px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus { border-color: #E85D04; }
+  button.send-btn {
+    background: #E85D04;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 24px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  button.send-btn:hover { opacity: 0.85; }
+  button.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .input-hint { text-align: center; font-size: 11px; color: #bbb; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">📋</div>
+    <div>
+      <div class="header-title">SOP 智能问答系统</div>
+      <div class="header-sub">Laravel + pgvector + GPT-4o-mini · 5 份餐饮业 SOP</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="new-chat-btn" id="newChatBtn" onclick="newChat()">＋ 新对话</button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-zh" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<div class="chat-area" id="chatArea">
+  <div class="welcome" id="welcome">
+    <h2 id="welcome-title">你好！有什么 SOP 问题可以问我</h2>
+    <p id="welcome-sub">我会根据公司的标准作业程序回答，并注明来源章节。支持追问。</p>
+    <div class="sample-questions" id="sampleQuestions">
+      <div class="sample-q" onclick="ask(this.textContent)">鸡肉冷藏应该保持在什么温度？</div>
+      <div class="sample-q" onclick="ask(this.textContent)">发生火灾时员工应该怎么做？</div>
+      <div class="sample-q" onclick="ask(this.textContent)">新员工入职需要完成哪些培训？</div>
+      <div class="sample-q" onclick="ask(this.textContent)">顾客投诉应该如何处理？</div>
+      <div class="sample-q" onclick="ask(this.textContent)">加班费怎么计算？</div>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-row">
+    <input type="text" id="questionInput" placeholder="输入问题，支持追问…" />
+    <button class="send-btn" id="sendBtn" onclick="sendQuestion()">发送</button>
+  </div>
+  <div class="input-hint" id="inputHint">按 Enter 发送 · 可以追问「那…呢？」</div>
+</div>
+
+<script>
+const API = '/api/ask';
+let currentLang = 'zh';
+let conversationHistory = [];   // ← 对话记忆核心
+
+const i18n = {
+  zh: {
+    welcomeTitle: '你好！有什么 SOP 问题可以问我',
+    welcomeSub: '我会根据公司的标准作业程序回答，并注明来源章节。支持追问。',
+    samples: ['鸡肉冷藏应该保持在什么温度？', '发生火灾时员工应该怎么做？', '新员工入职需要完成哪些培训？', '顾客投诉应该如何处理？', '加班费怎么计算？'],
+    placeholder: '输入问题，支持追问…',
+    sendBtn: '发送',
+    hint: '按 Enter 发送 · 可以追问「那…呢？」',
+    aiLabel: 'SOP 助理',
+    newChat: '＋ 新对话',
+    memoryLabel: (n) => `记忆中 ${n} 轮对话`,
+    errorMsg: '连接失败，请确认 Laravel server 正在运行。',
+  },
+  en: {
+    welcomeTitle: 'Hi! Ask me anything about our SOPs',
+    welcomeSub: 'I\'ll answer based on our Standard Operating Procedures. You can ask follow-up questions.',
+    samples: ['What temperature should chicken be stored at?', 'What should staff do in case of fire?', 'What training does a new employee need?', 'How should customer complaints be handled?', 'How is overtime pay calculated?'],
+    placeholder: 'Ask a question or follow up…',
+    sendBtn: 'Send',
+    hint: 'Press Enter to send · Follow-up questions supported',
+    aiLabel: 'SOP Assistant',
+    newChat: '＋ New Chat',
+    memoryLabel: (n) => `${n} turn${n > 1 ? 's' : ''} in memory`,
+    errorMsg: 'Connection failed. Please make sure the Laravel server is running.',
+  }
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = i18n[lang];
+  document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  const welcome = document.getElementById('welcome');
+  if (welcome) {
+    document.getElementById('welcome-title').textContent = t.welcomeTitle;
+    document.getElementById('welcome-sub').textContent = t.welcomeSub;
+    const sq = document.getElementById('sampleQuestions');
+    sq.innerHTML = t.samples.map(q => `<div class="sample-q" onclick="ask(this.textContent)">${q}</div>`).join('');
+  }
+  document.getElementById('questionInput').placeholder = t.placeholder;
+  document.getElementById('sendBtn').textContent = t.sendBtn;
+  document.getElementById('inputHint').textContent = t.hint;
+  document.getElementById('newChatBtn').textContent = t.newChat;
+}
+
+function newChat() {
+  conversationHistory = [];
+  const chatArea = document.getElementById('chatArea');
+  const t = i18n[currentLang];
+  chatArea.innerHTML = `
+    <div class="welcome" id="welcome">
+      <h2 id="welcome-title">${t.welcomeTitle}</h2>
+      <p id="welcome-sub">${t.welcomeSub}</p>
+      <div class="sample-questions" id="sampleQuestions">
+        ${t.samples.map(q => `<div class="sample-q" onclick="ask(this.textContent)">${q}</div>`).join('')}
+      </div>
+    </div>`;
+  document.getElementById('questionInput').focus();
+}
+
+document.getElementById('questionInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) sendQuestion();
+});
+
+function sendQuestion() {
+  const input = document.getElementById('questionInput');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  ask(q);
+}
+
+async function ask(question) {
+  const t = i18n[currentLang];
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+
+  const chatArea = document.getElementById('chatArea');
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+
+  // 显示记忆指示（有历史才显示）
+  const memoryIndicator = conversationHistory.length > 0
+    ? `<div class="memory-badge">🧠 ${t.memoryLabel(Math.floor(conversationHistory.length / 2))}</div>`
+    : '';
+
+  chatArea.innerHTML += `
+    <div class="message user-message">
+      ${memoryIndicator}
+      <div class="user-bubble">${escHtml(question)}</div>
+    </div>`;
+
+  const loadingId = 'loading-' + Date.now();
+  chatArea.innerHTML += `
+    <div class="message ai-message" id="${loadingId}">
+      <div class="ai-label">${escHtml(t.aiLabel)}</div>
+      <div class="loading-bubble">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>`;
+  chatArea.scrollTop = chatArea.scrollHeight;
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question,
+        top_k: 5,
+        lang: currentLang,
+        history: conversationHistory,    // ← 送出历史
+      })
+    });
+    const data = await res.json();
+
+    // ── 更新对话历史 ──────────────────────────────
+    conversationHistory.push({ role: 'user',      content: question });
+    conversationHistory.push({ role: 'assistant', content: data.answer });
+    // 只保留最近 3 轮（6 条），避免 token 爆炸
+    if (conversationHistory.length > 6) {
+      conversationHistory = conversationHistory.slice(-6);
+    }
+
+    // Sources
+    const sourcesHtml = data.sources.map(s => {
+      const typeLabel = s.search_type === 'hybrid' ? '⭐' : s.search_type === 'text' ? '🔤' : '🔵';
+      const rerankBadge = s.rerank_score != null
+        ? `<span class="source-rerank">${s.rerank_score}</span>`
+        : '';
+      return `
+        <div class="source-chip">
+          ${typeLabel} ${escHtml(s.file_code)} · ${escHtml(s.section)}
+          <span class="source-sim">${s.similarity}</span>${rerankBadge}
+        </div>`;
+    }).join('');
+
+    const tokens = data.tokens_used;
+    const tokenInfo = `${data.model} · ${tokens.total_tokens} tokens`;
+
+    document.getElementById(loadingId).outerHTML = `
+      <div class="message ai-message">
+        <div class="ai-label">${escHtml(t.aiLabel)}</div>
+        <div class="ai-bubble">${escHtml(data.answer)}</div>
+        <div class="sources">${sourcesHtml}</div>
+        <div class="token-info">${tokenInfo}</div>
+      </div>`;
+
+  } catch (err) {
+    document.getElementById(loadingId).outerHTML = `
+      <div class="message ai-message">
+        <div class="ai-label">${escHtml(t.aiLabel)}</div>
+        <div class="ai-bubble" style="color:#c00">${escHtml(t.errorMsg)}</div>
+      </div>`;
+  }
+
+  chatArea.scrollTop = chatArea.scrollHeight;
+  btn.disabled = false;
+  document.getElementById('questionInput').focus();
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
