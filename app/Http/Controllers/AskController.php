@@ -36,7 +36,7 @@ class AskController extends Controller
         $request->validate([
             'question'      => 'required|string|max:1000',
             'top_k'         => 'integer|min:1|max:10',
-            'lang'          => 'in:zh,en',
+            'lang'          => 'in:zh,en,ms',
             'history'       => 'array|max:20',
             'history.*.role'    => 'in:user,assistant',
             'history.*.content' => 'string|max:2000',

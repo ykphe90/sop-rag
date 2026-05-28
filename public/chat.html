@@ -13,7 +13,6 @@
     display: flex;
     flex-direction: column;
   }
-
   .header {
     background: linear-gradient(135deg, #C84B00, #E85D04);
     color: white;
@@ -29,7 +28,6 @@
   .header-sub { font-size: 12px; color: white; margin-top: 2px; opacity: 0.8; }
   .header-right { display: flex; align-items: center; gap: 10px; }
 
-  /* Language toggle */
   .lang-toggle {
     display: flex;
     background: rgba(255,255,255,0.2);
@@ -41,17 +39,17 @@
     border: none;
     background: transparent;
     color: rgba(255,255,255,0.7);
-    padding: 5px 14px;
+    padding: 5px 12px;
     border-radius: 16px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
   }
   .lang-btn.active { background: white; color: #E85D04; }
   .lang-btn:hover:not(.active) { color: white; }
 
-  /* New Chat button */
   .new-chat-btn {
     border: 1.5px solid rgba(255,255,255,0.6);
     background: transparent;
@@ -72,87 +70,71 @@
     flex-direction: column;
     gap: 20px;
   }
-
   .welcome { text-align: center; color: #888; padding: 40px 20px; }
   .welcome h2 { font-size: 18px; color: #444; margin-bottom: 8px; }
   .welcome p { font-size: 14px; line-height: 1.6; }
   .sample-questions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
   .sample-q {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 13px;
-    cursor: pointer;
-    color: #555;
-    transition: all 0.2s;
+    background: white; border: 1px solid #ddd; border-radius: 20px;
+    padding: 6px 14px; font-size: 13px; cursor: pointer; color: #555; transition: all 0.2s;
   }
   .sample-q:hover { background: #E85D04; color: white; border-color: #E85D04; }
 
   .message { display: flex; flex-direction: column; max-width: 780px; width: 100%; margin: 0 auto; }
   .user-message { align-items: flex-end; }
   .user-bubble {
-    background: #E85D04;
-    color: white;
-    padding: 12px 16px;
-    border-radius: 18px 18px 4px 18px;
-    font-size: 14px;
-    max-width: 70%;
-    line-height: 1.5;
+    background: #E85D04; color: white; padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px; font-size: 14px; max-width: 70%; line-height: 1.5;
   }
   .ai-message { align-items: flex-start; }
   .ai-label { font-size: 11px; color: #888; margin-bottom: 6px; padding-left: 4px; }
   .ai-bubble {
-    background: white;
-    border: 1px solid #e8e8e8;
-    padding: 16px;
-    border-radius: 4px 18px 18px 18px;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #333;
-    white-space: pre-wrap;
-    max-width: 100%;
+    background: white; border: 1px solid #e8e8e8; padding: 16px;
+    border-radius: 4px 18px 18px 18px; font-size: 14px; line-height: 1.7;
+    color: #333; white-space: pre-wrap; max-width: 100%;
   }
-
-  /* Memory indicator */
   .memory-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: #e8f5e9;
-    border: 1px solid #a5d6a7;
-    border-radius: 10px;
-    padding: 2px 8px;
-    font-size: 11px;
-    color: #2e7d32;
-    margin-bottom: 6px;
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 10px;
+    padding: 2px 8px; font-size: 11px; color: #2e7d32; margin-bottom: 6px;
   }
-
   .sources { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
   .source-chip {
-    background: #FFF3E0;
-    border: 1px solid #FFCC80;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: #BF360C;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    background: #FFF3E0; border: 1px solid #FFCC80; border-radius: 6px;
+    padding: 4px 10px; font-size: 11px; color: #BF360C;
+    display: flex; align-items: center; gap: 6px;
   }
   .source-sim { background: #E85D04; color: white; border-radius: 3px; padding: 1px 5px; font-size: 10px; }
   .source-rerank { background: #6c5ce7; color: white; border-radius: 3px; padding: 1px 5px; font-size: 10px; }
-
   .token-info { font-size: 11px; color: #bbb; margin-top: 6px; padding-left: 4px; }
 
+  /* Tooltip */
+  .has-tip {
+    position: relative;
+    cursor: help;
+  }
+  .has-tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    z-index: 10;
+  }
+  .has-tip:hover::after { opacity: 1; }
+
   .loading-bubble {
-    background: white;
-    border: 1px solid #e8e8e8;
-    padding: 16px;
-    border-radius: 4px 18px 18px 18px;
-    display: flex;
-    gap: 6px;
-    align-items: center;
+    background: white; border: 1px solid #e8e8e8; padding: 16px;
+    border-radius: 4px 18px 18px 18px; display: flex; gap: 6px; align-items: center;
   }
   .dot { width: 8px; height: 8px; background: #aaa; border-radius: 50%; animation: bounce 1.2s infinite; }
   .dot:nth-child(2) { animation-delay: 0.2s; }
@@ -162,37 +144,54 @@
     30% { transform: translateY(-8px); }
   }
 
-  .input-area {
-    background: white;
-    border-top: 1px solid #e8e8e8;
-    padding: 16px 24px;
-    flex-shrink: 0;
-  }
+  .input-area { background: white; border-top: 1px solid #e8e8e8; padding: 16px 24px; flex-shrink: 0; }
   .input-row { display: flex; gap: 10px; max-width: 780px; margin: 0 auto; }
   input[type="text"] {
-    flex: 1;
-    padding: 12px 16px;
-    border: 1.5px solid #ddd;
-    border-radius: 24px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1; padding: 12px 16px; border: 1.5px solid #ddd;
+    border-radius: 24px; font-size: 14px; outline: none; transition: border-color 0.2s;
   }
   input[type="text"]:focus { border-color: #E85D04; }
   button.send-btn {
-    background: #E85D04;
-    color: white;
-    border: none;
-    border-radius: 24px;
-    padding: 12px 24px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    white-space: nowrap;
+    background: #E85D04; color: white; border: none; border-radius: 24px;
+    padding: 12px 24px; font-size: 14px; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
   }
   button.send-btn:hover { opacity: 0.85; }
   button.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .input-hint { text-align: center; font-size: 11px; color: #bbb; margin-top: 8px; }
+
+  /* ── Mobile Responsive ─────────────────────────── */
+  @media (max-width: 600px) {
+    .header {
+      padding: 12px 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-title { font-size: 14px; }
+    .header-sub { font-size: 11px; }
+    .header-right { width: 100%; justify-content: space-between; }
+
+    .new-chat-btn { padding: 5px 10px; font-size: 12px; }
+    .lang-btn { padding: 5px 10px; font-size: 12px; }
+
+    .chat-area { padding: 16px 12px; gap: 14px; }
+
+    .message { max-width: 100%; }
+    .user-bubble { max-width: 85%; font-size: 14px; }
+    .ai-bubble { font-size: 14px; padding: 12px; }
+
+    .source-chip { font-size: 10px; padding: 3px 8px; }
+    .source-sim, .source-rerank { font-size: 9px; padding: 1px 4px; }
+
+    .input-area { padding: 12px 16px; }
+    input[type="text"] { font-size: 16px; /* prevent iOS zoom */ padding: 10px 14px; }
+    button.send-btn { padding: 10px 18px; font-size: 14px; }
+    .input-hint { font-size: 10px; }
+
+    .welcome { padding: 24px 12px; }
+    .welcome h2 { font-size: 16px; }
+    .welcome p { font-size: 13px; }
+    .sample-q { font-size: 12px; padding: 5px 12px; }
+  }
 </style>
 </head>
 <body>
@@ -201,8 +200,8 @@
   <div class="header-left">
     <div class="header-icon">📋</div>
     <div>
-      <div class="header-title">SOP 智能问答系统</div>
-      <div class="header-sub">Laravel + pgvector + GPT-4o-mini · 5 份餐饮业 SOP</div>
+      <div class="header-title" id="header-title">SOP 智能问答系统</div>
+      <div class="header-sub" id="header-sub">Laravel + pgvector + GPT-4o-mini · 5 份餐饮业 SOP</div>
     </div>
   </div>
   <div class="header-right">
@@ -210,6 +209,7 @@
     <div class="lang-toggle">
       <button class="lang-btn active" id="btn-zh" onclick="setLang('zh')">中文</button>
       <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-ms" onclick="setLang('ms')">BM</button>
     </div>
   </div>
 </div>
@@ -239,7 +239,7 @@
 <script>
 const API = '/api/ask';
 let currentLang = 'zh';
-let conversationHistory = [];   // ← 对话记忆核心
+let conversationHistory = [];
 
 const i18n = {
   zh: {
@@ -252,11 +252,13 @@ const i18n = {
     aiLabel: 'SOP 助理',
     newChat: '＋ 新对话',
     memoryLabel: (n) => `记忆中 ${n} 轮对话`,
+    headerTitle: 'SOP 智能问答系统',
+    headerSub: 'Laravel + pgvector + GPT-4o-mini · 5 份餐饮业 SOP',
     errorMsg: '连接失败，请确认 Laravel server 正在运行。',
   },
   en: {
     welcomeTitle: 'Hi! Ask me anything about our SOPs',
-    welcomeSub: 'I\'ll answer based on our Standard Operating Procedures. You can ask follow-up questions.',
+    welcomeSub: "I'll answer based on our Standard Operating Procedures. Follow-up questions supported.",
     samples: ['What temperature should chicken be stored at?', 'What should staff do in case of fire?', 'What training does a new employee need?', 'How should customer complaints be handled?', 'How is overtime pay calculated?'],
     placeholder: 'Ask a question or follow up…',
     sendBtn: 'Send',
@@ -264,21 +266,40 @@ const i18n = {
     aiLabel: 'SOP Assistant',
     newChat: '＋ New Chat',
     memoryLabel: (n) => `${n} turn${n > 1 ? 's' : ''} in memory`,
+    headerTitle: 'SOP Intelligent Q&A System',
+    headerSub: 'Laravel + pgvector + GPT-4o-mini · 5 F&B SOPs',
     errorMsg: 'Connection failed. Please make sure the Laravel server is running.',
+  },
+  ms: {
+    welcomeTitle: 'Hai! Tanya apa-apa tentang SOP kami',
+    welcomeSub: 'Saya akan menjawab berdasarkan Prosedur Operasi Standard syarikat. Soalan susulan disokong.',
+    samples: ['Pada suhu berapa ayam perlu disimpan?', 'Apa yang perlu dilakukan kakitangan semasa kebakaran?', 'Apakah latihan yang diperlukan pekerja baru?', 'Bagaimana menangani aduan pelanggan?', 'Bagaimana pengiraan elaun lebih masa?'],
+    placeholder: 'Tanya soalan atau soalan susulan…',
+    sendBtn: 'Hantar',
+    hint: 'Tekan Enter untuk hantar · Soalan susulan disokong',
+    aiLabel: 'Pembantu SOP',
+    newChat: '＋ Sembang Baru',
+    memoryLabel: (n) => `${n} giliran dalam ingatan`,
+    headerTitle: 'Sistem Soal Jawab SOP',
+    headerSub: 'Laravel + pgvector + GPT-4o-mini · 5 SOP F&B',
+    errorMsg: 'Sambungan gagal. Pastikan pelayan Laravel sedang berjalan.',
   }
 };
 
 function setLang(lang) {
   currentLang = lang;
   const t = i18n[lang];
-  document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
-  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('header-title').textContent = t.headerTitle;
+  document.getElementById('header-sub').textContent = t.headerSub;
+  ['zh','en','ms'].forEach(l =>
+    document.getElementById('btn-' + l).classList.toggle('active', l === lang)
+  );
   const welcome = document.getElementById('welcome');
   if (welcome) {
     document.getElementById('welcome-title').textContent = t.welcomeTitle;
     document.getElementById('welcome-sub').textContent = t.welcomeSub;
-    const sq = document.getElementById('sampleQuestions');
-    sq.innerHTML = t.samples.map(q => `<div class="sample-q" onclick="ask(this.textContent)">${q}</div>`).join('');
+    document.getElementById('sampleQuestions').innerHTML =
+      t.samples.map(q => `<div class="sample-q" onclick="ask(this.textContent)">${q}</div>`).join('');
   }
   document.getElementById('questionInput').placeholder = t.placeholder;
   document.getElementById('sendBtn').textContent = t.sendBtn;
@@ -288,9 +309,8 @@ function setLang(lang) {
 
 function newChat() {
   conversationHistory = [];
-  const chatArea = document.getElementById('chatArea');
   const t = i18n[currentLang];
-  chatArea.innerHTML = `
+  document.getElementById('chatArea').innerHTML = `
     <div class="welcome" id="welcome">
       <h2 id="welcome-title">${t.welcomeTitle}</h2>
       <p id="welcome-sub">${t.welcomeSub}</p>
@@ -322,7 +342,6 @@ async function ask(question) {
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
 
-  // 显示记忆指示（有历史才显示）
   const memoryIndicator = conversationHistory.length > 0
     ? `<div class="memory-badge">🧠 ${t.memoryLabel(Math.floor(conversationHistory.length / 2))}</div>`
     : '';
@@ -347,47 +366,33 @@ async function ask(question) {
     const res = await fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question,
-        top_k: 5,
-        lang: currentLang,
-        history: conversationHistory,    // ← 送出历史
-      })
+      body: JSON.stringify({ question, top_k: 5, lang: currentLang, history: conversationHistory })
     });
     const data = await res.json();
 
-    // ── 更新对话历史 ──────────────────────────────
-    conversationHistory.push({ role: 'user',      content: question });
+    conversationHistory.push({ role: 'user', content: question });
     conversationHistory.push({ role: 'assistant', content: data.answer });
-    // 只保留最近 3 轮（6 条），避免 token 爆炸
-    if (conversationHistory.length > 6) {
-      conversationHistory = conversationHistory.slice(-6);
-    }
+    if (conversationHistory.length > 6) conversationHistory = conversationHistory.slice(-6);
 
-    // Sources
     const sourcesHtml = data.sources.map(s => {
       const typeLabel = s.search_type === 'hybrid' ? '⭐' : s.search_type === 'text' ? '🔤' : '🔵';
-      const rerankBadge = s.rerank_score != null
-        ? `<span class="source-rerank">${s.rerank_score}</span>`
+      // Extract section number only (e.g. "4.3" from "4.3 加班管理")
+      const sectionCode = s.section.match(/^[\d.]+/)?.[0] ?? s.section.split(' ')[0];
+      const simTip = {'zh': '向量相似度', 'en': 'Vector Similarity', 'ms': 'Persamaan Vektor'}[currentLang] || 'Vector Similarity';
+      const rrTip  = {'zh': 'Rerank 相关度', 'en': 'Rerank Score', 'ms': 'Skor Rerank'}[currentLang] || 'Rerank Score';
+      const rerankBadgeTipped = s.rerank_score != null
+        ? `<span class="source-rerank has-tip" data-tip="${rrTip}">${s.rerank_score}</span>`
         : '';
-      return `
-        <div class="source-chip">
-          ${typeLabel} ${escHtml(s.file_code)} · ${escHtml(s.section)}
-          <span class="source-sim">${s.similarity}</span>${rerankBadge}
-        </div>`;
+      return `<div class="source-chip">${typeLabel} ${escHtml(s.file_code)} · ${escHtml(sectionCode)}<span class="source-sim has-tip" data-tip="${simTip}">${s.similarity}</span>${rerankBadgeTipped}</div>`;
     }).join('');
-
-    const tokens = data.tokens_used;
-    const tokenInfo = `${data.model} · ${tokens.total_tokens} tokens`;
 
     document.getElementById(loadingId).outerHTML = `
       <div class="message ai-message">
         <div class="ai-label">${escHtml(t.aiLabel)}</div>
         <div class="ai-bubble">${escHtml(data.answer)}</div>
         <div class="sources">${sourcesHtml}</div>
-        <div class="token-info">${tokenInfo}</div>
+        <div class="token-info">${data.model} · ${data.tokens_used.total_tokens} tokens</div>
       </div>`;
-
   } catch (err) {
     document.getElementById(loadingId).outerHTML = `
       <div class="message ai-message">
@@ -402,9 +407,7 @@ async function ask(question) {
 }
 
 function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>

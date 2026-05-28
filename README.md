@@ -12,7 +12,7 @@
 - **Hybrid Search** — Combines vector similarity + PostgreSQL full-text search, merged with RRF (Reciprocal Rank Fusion) scoring
 - **Reranking** — Cohere cross-encoder re-scores candidates for higher source accuracy
 - **Conversation Memory** — Multi-turn follow-up questions supported (last 3 turns in context)
-- **Bilingual** — Toggle between Chinese (中文) and English; cross-lingual queries work out of the box
+- **Trilingual** — Toggle between Chinese (中文), English, and Bahasa Malaysia (BM); cross-lingual queries work out of the box
 - **Source Citations** — Every answer cites the SOP document and section it came from
 - **Evaluated** — 20-question benchmark; 75% strict accuracy on v1, improved with Hybrid Search + Reranking
 
